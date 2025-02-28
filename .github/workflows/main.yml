@@ -3,25 +3,28 @@ name: Portfolio Deployment
 on:
   push:
     branches:
-    - main
-    - Master
-    - Demo
+      - main
+      - Master
+      - Demo  # This will trigger deployments on any of these branches
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v1
+      # Step 1: Checkout the code
+      - name: Checkout Repository
+        uses: actions/checkout@v2  # Use v2 for better performance
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      # Step 2: Set up AWS Credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # You can change the region if needed
 
-    - name: Deploy static site to S3 bucket
-      run: aws s3 sync . s3://twsportfolio --delete
-      
-
+      # Step 3: Deploy static site to S3 bucket
+      - name: Deploy Static Site to S3 Bucket
+        run: |
+          # If you're using a build process, sync the build directory (e.g., `build` or `dist`)
+          aws s3 sync ./build/ s3://twsportfolio --delete  # Adjust 'build' to your actual output folder
